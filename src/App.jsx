@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import "./App.css";
 
 const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 const suits = { "S": "Spades", "H": "Hearts", "D": "Diamonds", "C": "Clubs" };
 
-// Функция создания и перемешивания колоды
 const createDeck = () => {
   let deck = [];
   for (let suit in suits) {
@@ -64,14 +63,11 @@ function App() {
     setPendingDraw(false);
   };
 
-  // Функция сортировки карт (при добавлении)
   const sortByRank = (a, b) => ranks.indexOf(a.rank) - ranks.indexOf(b.rank);
 
   return (
     <div className="h-screen bg-green-800 flex flex-col items-center justify-center p-6 text-white font-mono">
       <h1 className="text-4xl font-bold mb-6">Go Fish 🎣</h1>
-
-      {/* Сообщение о ходе */}
       <p className="text-xl mb-4 px-4 py-2 bg-black/50 rounded-lg">{message}</p>
 
       {/* Карты бота */}
@@ -79,9 +75,9 @@ function App() {
         <h2 className="text-2xl font-semibold mb-4">Bot's Hand</h2>
         <div className="flex gap-3 flex-wrap justify-center">
           {botHand.map((_, index) => (
-            <span key={index} className="p-4 bg-gray-500 rounded-lg shadow-lg text-xl font-bold w-14 h-20 flex items-center justify-center">
-              ❓
-            </span>
+            
+              <img src="/public/cards/back.png" alt="Card Back" className="w-16 h-24 object-contain shadow-lg rounded-lg" />
+            
           ))}
         </div>
       </div>
@@ -100,24 +96,29 @@ function App() {
         )}
       </div>
 
-      {/* Карты игрока */}
+      {/* Карты игрока с анимацией появления */}
       <div className="bg-green-900 p-6 rounded-lg shadow-lg w-full max-w-2xl text-center">
         <h2 className="text-2xl font-semibold mb-4">Your Hand</h2>
         <div className="flex gap-3 flex-wrap justify-center">
-          {playerHand.map((card, index) => (
-            <motion.button
-              key={index}
-              onClick={() => askForCard(card.rank)}
-              className="transition"
-              whileHover={{ scale: 1.1 }}
-            >
-              <img
-                src={`/public/cards/${card.suit}${card.rank}.png`}
-                alt={`${card.rank} of ${suits[card.suit]}`}
-                className="w-16 h-24 object-contain shadow-lg rounded-lg"
-              />
-            </motion.button>
-          ))}
+          <AnimatePresence>
+            {playerHand.map((card, index) => (
+              <motion.button
+                key={index}
+                onClick={() => askForCard(card.rank)}
+                className="transition"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                whileHover={{ scale: 1.1 }}
+              >
+                <img
+                  src={`/public/cards/${card.suit}${card.rank}.png`}
+                  alt={`${card.rank} of ${suits[card.suit]}`}
+                  className="w-16 h-24 object-contain shadow-lg rounded-lg"
+                />
+              </motion.button>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>
