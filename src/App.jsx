@@ -23,7 +23,6 @@ function App() {
   const [message, setMessage] = useState("Your turn! Pick a card to ask.");
   const [selectedCard, setSelectedCard] = useState(null);
   const [pendingDraw, setPendingDraw] = useState(false);
-  const [drawnCard, setDrawnCard] = useState(null); // Store the card being drawn for animation
 
   useEffect(() => {
     const shuffledDeck = createDeck();
@@ -44,8 +43,6 @@ function App() {
         setBotHand(botHand.filter((card) => card.rank !== rank));
         setPlayerHand([...playerHand, ...botHasCard].sort(sortByRank));
         setMessage(`Bot gave you ${botHasCard.length} card(s)!`);
-        // Set the drawn card for animation
-        setDrawnCard(botHasCard[0]);
       } else {
         if (deck.length > 0) {
           setMessage("Go Fish! Click the deck to draw a card.");
@@ -65,7 +62,6 @@ function App() {
     setPlayerHand([...playerHand, newCard].sort(sortByRank));
     setMessage(`You drew a ${newCard.rank} of ${suits[newCard.suit]}.`);
     setPendingDraw(false);
-    setDrawnCard(newCard); // Set the drawn card for animation
   };
 
   // Функция сортировки карт (при добавлении)
@@ -124,23 +120,6 @@ function App() {
           ))}
         </div>
       </div>
-
-      {/* Анимация для нарисованной карты */}
-      {drawnCard && (
-        <motion.div
-          className="absolute"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
-        >
-          <img
-            src={`/public/cards/${drawnCard.suit}${drawnCard.rank}.png`}
-            alt={`${drawnCard.rank} of ${suits[drawnCard.suit]}`}
-            className="w-16 h-24 object-contain shadow-lg rounded-lg"
-          />
-        </motion.div>
-      )}
     </div>
   );
 }
